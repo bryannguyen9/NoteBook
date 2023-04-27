@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // uuid is for rand id generation
-const uuid = require('uuid');
+const { v4: uuid } = require('uuid');
 
 // import db.js class
 const dbImport = require('../Develop/db/db');
