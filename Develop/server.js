@@ -9,14 +9,15 @@ const app = express();
 const PORT = 3001;
 
 // Middleware for parsing JSON data
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static('public'));
+
 
 // import routes for getting and posting data
-const apiRoutes = require('./routes/apiRoutes.js');
+const apiRoutes = require('../routes/apiRoutes.js');
 app.use(apiRoutes);
-const htmlRoutes = require('./router/htmlRoutes.js');
+const htmlRoutes = require('../routes/htmlRoutes.js');
 app.use(htmlRoutes);
 
 // server listener for connections
