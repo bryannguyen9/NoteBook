@@ -118,35 +118,24 @@ const handleRenderSaveBtn = () => {
   }
 };
 
-function createLi(title) {
-  const li = document.createElement('li');
-  li.innerText = title;
-  return li;
-}
-
 // Render the list of note titles
-const renderNoteList = (notes) => {
-  if (window.location.pathname === '/notes') {
-    noteList.forEach((el) => (el.innerHTML = ''));
-  }
-
-  let noteListItems = [];
-
+async function renderNoteList() {
+  const notes = await getNotes();
+  const noteListElement = document.querySelector('.list-group');
   if (notes.length === 0) {
-    noteListItems.push(createLi('No saved Notes', false));
+    noteListElement.innerHTML = '<p class="text-center">No notes yet</p>';
+    return;
   }
-
-  notes.forEach((note) => {
-    const li = createLi(note.title);
-    li.dataset.note = JSON.stringify(note);
-
-    noteListItems.push(li);
+  noteListElement.innerHTML = '';
+  notes.forEach(note => {
+    const listItemElement = document.createElement('li');
+    listItemElement.classList.add('list-group-item');
+    listItemElement.setAttribute('data-note-id', note.id);
+    listItemElement.innerHTML = `<span>${note.title}</span>
+      <i class="fas fa-trash-alt float-right delete-note" data-note-id="${note.id}"></i>`;
+    noteListElement.appendChild(listItemElement);
   });
-
-  if (window.location.pathname === '/notes') {
-    noteListItems.forEach((note) => noteList[0].append(note));
-  }
-};
+}
 
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
