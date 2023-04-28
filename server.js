@@ -15,9 +15,9 @@ app.use(express.json());
 
 
 // import routes for getting and posting data
-const apiRoutes = require('../routes/apiRoutes.js');
+const apiRoutes = require('./routes/apiRoutes.js');
 app.use(apiRoutes);
-const htmlRoutes = require('../routes/htmlRoutes.js');
+const htmlRoutes = require('./routes/htmlRoutes.js');
 app.use(htmlRoutes);
 
 // server listener for connections
