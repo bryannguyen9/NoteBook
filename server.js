@@ -14,7 +14,6 @@ app.use(express.static('./public'));
 
 // Routes
 app.get('/', (req, res) => {
-  // Use path.join() to concatenate directory path and filename
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
@@ -23,7 +22,6 @@ app.get('/notes', (req, res) => {
 });
 
 app.get('/api/notes', (req, res) => {
-  // Use fs.promises.readFile() to avoid callback hell
   fs.promises
     .readFile('./db/db.json', 'utf-8')
     .then((data) => {

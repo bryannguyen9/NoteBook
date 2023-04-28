@@ -2,5 +2,10 @@
   {
     "title": "Test Title",
     "text": "Test text"
+  },
+  {
+    "title": "My Second Note",
+    "text": "My text for the second note",
+    "id": "note-1cpe7fh0lh04fohr"
   }
 ]

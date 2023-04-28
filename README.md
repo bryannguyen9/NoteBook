@@ -1,133 +1,173 @@
 # NoteBook
-This is an application for logging all of your notes. Keep them clean and minimal for daily tasks or overall thoughts!
 
-# 11 Express.js: Note Taker
+## Description 
 
-## Your Task
+This is the Notebook Buddy. An application for logging all of your notes. Keeping them clean, organized, and minimal for daily tasks or overall thoughts!
+This application uses express.js and node.js to enable api get and post methodologies as well as allows for port usage on a local computer.
 
-Your assignment is to modify starter code to create an application called Note Taker that can be used to write and save notes. This application will use an Express.js back end and will save and retrieve note data from a JSON file.
-
-The application’s front end has already been created. It's your job to build the back end, connect the two, and then deploy the entire application to Heroku.
-
-
-## User Story
-
-```
-AS A small business owner
-I WANT to be able to write and save notes
-SO THAT I can organize my thoughts and keep track of tasks I need to complete
-```
-
-
-## Acceptance Criteria
-
-```
-GIVEN a note-taking application
-WHEN I open the Note Taker
-THEN I am presented with a landing page with a link to a notes page
-WHEN I click on the link to the notes page
-THEN I am presented with a page with existing notes listed in the left-hand column, plus empty fields to enter a new note title and the note’s text in the right-hand column
-WHEN I enter a new note title and the note’s text
-THEN a Save icon appears in the navigation at the top of the page
-WHEN I click on the Save icon
-THEN the new note I have entered is saved and appears in the left-hand column with the other existing notes
-WHEN I click on an existing note in the list in the left-hand column
-THEN that note appears in the right-hand column
-WHEN I click on the Write icon in the navigation at the top of the page
-THEN I am presented with empty fields to enter a new note title and the note’s text in the right-hand column
-```
-
+[Visit my deployed app on heroku](https://note-book-buddy-taker-app.herokuapp.com/)
 
 ## Mock-Up
+### Here is a GIF to demo the Notebook Buddy:
+![Notebook Buddy Demo](./Assets/notebookdemo.gif)
 
-The following images show the web application's appearance and functionality:
+The following image shows the homepage of the Notebook Buddy.
 
-![Existing notes are listed in the left-hand column with empty fields on the right-hand side for the new note’s title and text.](./Assets/11-express-challenge-demo-01.png)
+![homescreen](./Assets/homescreen.png)
 
-![Note titled “Balance accounts” reads, “Balance account books by end of day Monday,” with other notes listed on the left.](./Assets/11-express-challenge-demo-02.png)
+The following image shows the notes page of the Notebook Buddy.
 
+![Past note](./Assets/clickablenote.png)
 
-## Getting Started
+## Table of Contents
 
-On the back end, the application should include a `db.json` file that will be used to store and retrieve notes using the `fs` module.
+* [Installation](#installation)
+* [Code Example](#code-example)
+* [Usage](#usage)
+* [Learning Points](#learning-points)
+* [Author Info](#author-info)
+* [Credits](#credits)
+* [License](#license)
 
-The following HTML routes should be created:
+## Installation
 
-* `GET /notes` should return the `notes.html` file.
+If you would like to visit my live site:
+https://note-book-buddy-taker-app.herokuapp.com/
 
-* `GET *` should return the `index.html` file.
-
-The following API routes should be created:
-
-* `GET /api/notes` should read the `db.json` file and return all saved notes as JSON.
-
-* `POST /api/notes` should receive a new note to save on the request body, add it to the `db.json` file, and then return the new note to the client. You'll need to find a way to give each note a unique id when it's saved (look into npm packages that could do this for you).
-
-
-## Bonus
-
-You haven’t learned how to handle DELETE requests, but this application offers that functionality on the front end. As a bonus, try to add the DELETE route to the application using the following guideline:
-
-* `DELETE /api/notes/:id` should receive a query parameter that contains the id of a note to delete. To delete a note, you'll need to read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
-
-
-## Grading Requirements
-
-This challenge is graded based on the following criteria: 
+If you would like to get your own copy of Notebook Buddy on your computer:
+1. Clone down the repository or download all files within repository
+2. You will need node.js and express.js, as well as path packages ("npm i _put-package-here_")
+3. Open terminal within VS Code and type 'node server.js'
+4. Click the "Get Started" button and enjoy the app!
 
 
-### Technical Acceptance Criteria: 40%
 
-* Satisfies all of the preceding acceptance criteria plus the following:
+## Code Example
 
-  * Application front end must connect to an Express.js back end.
+Here is an example of one of my post api methods that code creates a route that accepts new notes, adds them to a JSON file, and responds with a success or error message depending on the outcome of the file operations.
 
-  * Application back end must store notes that have a unique id in a JSON file.
+server.js:
+```javascript
+app.post('/api/notes', (req, res) => {
+  const { title, text } = req.body;
 
-  * Application must be deployed to Heroku.
+  if (title && text) {
+    const newNote = {
+      title,
+      text,
+      id: uniqid('note-'),
+    };
+
+    fs.promises
+      .readFile('./db/db.json', 'utf-8')
+      .then((data) => {
+        let parsedNotesData = JSON.parse(data);
+        parsedNotesData.push(newNote);
+        return fs.promises.writeFile(
+          './db/db.json',
+          JSON.stringify(parsedNotesData, null, 2)
+        );
+      })
+      .then(() => {
+        res.send('new note creation successful');
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json('An error has occurred');
+      });
+  } else {
+    // Use res.status().send() instead of req.status().json()
+    res.status(500).send('An error has occurred');
+  }
+});
+```
+
+## Usage
+
+## Here is a GIF to show the NoteBook Buddy in action:
+[Example Application Usage](https://watch.screencastify.com/v/Cm0qja6cWXNEyOkbHjFJ)
+
+Here you can see the home page of Notebook Buddy:
+
+![homescreen](./Assets/homescreen.png)
+
+Here you can see after clicking "Get Started" the notes page:
+
+![notespage](./Assets/notespage.png)
+
+Here you can see how you are able to type a title and text for notes:
+
+![noteinput](./Assets/noteinput.png)
+
+Here you can see you can save notes using the save icon on the right hand side and it saves to the left hand side for future reference:
+
+![savednote](./Assets/savednote.png)
+
+Here you can see you are able to click on past notes for reference in the future:
+
+![Past note](./Assets/clickablenote.png)
+
+Here you can see that you are able to delete notes by click the red trash icon beside each note:
+
+![delete note](./Assets/deletenoteex.png)
+![delete note](./Assets/deleteex.png)
+![delete note](./Assets/deletenoteoutput.png)
 
 
-### Deployment: 36%
-
-* Application deployed at live URL.
-
-* Application loads with no errors.
-
-* Application GitHub URL submitted.
-
-* GitHub repository contains application code.
 
 
-### Application Quality: 11%
+## Learning Points 
 
-* Application console is free of errors.
+This was a was a great introduction into the use cases and ability of express.js. I think that going forward I am comfortable knowing that express.js will always be a useful tool in my back pocket. From pushing data into different .json files, to being able to host on local host with port usages I think that I will definitely be able to use express to the best of my ability in the future. All in all there were a few mishaps with paths and making sure I had the right paths going, however once I figured out how to organize and keep track of my file and paths express truly made this application stand out.
 
+## About Me
 
-### Repository Quality: 13%
+Hi, my name is Bryan Nguyen I am an up and coming full-stack web developer working
+on getting into the space with projects that support both my growth, belief, and imagination. I hope to one day work within the realm of AI, web-development, and even site-reliability/cyber-security.
 
-* Repository has a unique name.
+## My links
 
-* Repository follows best practices for file structure and naming conventions.
-
-* Repository follows best practices for class/id naming conventions, indentation, quality comments, etc.
-
-* Repository contains multiple descriptive commit messages.
-
-* Repository contains quality README file with description, screenshot, and link to deployed application.
+* [Portfolio](https://bryannguyen9.github.io/Bryan-Nguyen-Portfolio/)
+* [LinkedIn](https://linkedin.com/in/bryannguyen9)
+* [Github](https://github.com/bryannguyen9)
 
 
-### Bonus: +10 Points
+## Credits
 
-* Application allows users to delete notes.
+### Special thanks to David Chung: 
+ 
+ * His Github Portfolio: [David-Chung-Github](https://github.com/dchung13/)
+ * His Linked-In: [David-Chung-LinkedIn](https://www.linkedin.com/in/david-chung-77141526b/)
+ * His Portfolio Site: [David-Chung-Portfolio](https://dchung13.github.io/David-Chung-Portfolio/) 
+
+### Special thanks to these reference websites that taught me different functionalities that enabled a seamless experience for users.
+
+1. [Express.js](https://expressjs.com/en/guide/routing.html)
+2. [Geeksforgeeks](https://www.geeksforgeeks.org/express-js/)
+3. [Tutorialspoint](https://www.tutorialspoint.com/expressjs/index.htm)
+
+## License
+
+MIT License
+
+Copyright (c) [2023] [Bryan-Nguyen]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 
-## Review
-
-You are required to submit BOTH of the following for review:
-
-* The URL of the functional, deployed application.
-
-* The URL of the GitHub repository, with a unique name and a README describing the project.
-
-- - -
-© 2023 edX Boot Camps LLC. Confidential and Proprietary. All Rights Reserved.
