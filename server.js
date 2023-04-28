@@ -1,24 +1,95 @@
-// require dependencies
+// Import dependencies
 const express = require('express');
-// might need fs, util, read and write rquires here
+const path = require('path');
+const fs = require('fs');
+const uniqid = require('uniqid');
 
-// initalize express
+// Set up server
 const app = express();
+const PORT = process.env.PORT || 3001;
 
-// create port
-const PORT = 3001;
-
-// Middleware for parsing JSON data
-app.use(express.static('public'));
-app.use(express.urlencoded({ extended: true }));
+// Middleware
 app.use(express.json());
+app.use(express.static('./public'));
 
+// Routes
+app.get('/', (req, res) => {
+  // Use path.join() to concatenate directory path and filename
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
-// import routes for getting and posting data
-const apiRoutes = require('./routes/apiRoutes.js');
-app.use(apiRoutes);
-const htmlRoutes = require('./routes/htmlRoutes.js');
-app.use(htmlRoutes);
+app.get('/notes', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'notes.html'));
+});
 
-// server listener for connections
-app.listen(PORT, () => console.log(`Listening at http://localhost:${PORT}`));
+app.get('/api/notes', (req, res) => {
+  // Use fs.promises.readFile() to avoid callback hell
+  fs.promises
+    .readFile('./db/db.json', 'utf-8')
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.post('/api/notes', (req, res) => {
+  const { title, text } = req.body;
+
+  if (title && text) {
+    const newNote = {
+      title,
+      text,
+      id: uniqid('note-'),
+    };
+
+    fs.promises
+      .readFile('./db/db.json', 'utf-8')
+      .then((data) => {
+        let parsedNotesData = JSON.parse(data);
+        parsedNotesData.push(newNote);
+        return fs.promises.writeFile(
+          './db/db.json',
+          JSON.stringify(parsedNotesData, null, 2)
+        );
+      })
+      .then(() => {
+        res.send('new note creation successful');
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json('An error has occurred');
+      });
+  } else {
+    // Use res.status().send() instead of req.status().json()
+    res.status(500).send('An error has occurred');
+  }
+});
+
+app.delete('/api/notes/:id', (req, res) => {
+  fs.promises
+    .readFile('./db/db.json', 'utf-8')
+    .then((data) => {
+      let parsedNotesData = JSON.parse(data);
+      // Use Array.filter() to remove the note with the specified ID
+      parsedNotesData = parsedNotesData.filter(
+        (note) => note.id !== req.params.id
+      );
+      return fs.promises.writeFile(
+        './db/db.json',
+        JSON.stringify(parsedNotesData, null, 2)
+      );
+    })
+    .then(() => {
+      res.send('note deletion successful');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
